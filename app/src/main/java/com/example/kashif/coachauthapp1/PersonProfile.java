@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,7 +32,6 @@ public class PersonProfile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(this.getApplicationContext());
         setContentView(R.layout.activity_person_profile);
 
 
@@ -49,6 +49,8 @@ public class PersonProfile extends AppCompatActivity {
 
 
         getSupportActionBar().setTitle("WELCOME "+username);
+
+
 
         username_tv.append(username);
         usermail_tv.append(usermail);
@@ -79,6 +81,7 @@ public class PersonProfile extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 LoginManager.getInstance().logOut();
                 goToLoginScreen();
+                finish();
                 break;
             }
         }
@@ -90,7 +93,6 @@ public class PersonProfile extends AppCompatActivity {
     private void goToLoginScreen() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-        finish();
     }
 }
 

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -54,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private LoginButton facebook_login_button;
     private CallbackManager mCallbackManager;
 
+    private ProgressDialog progressDialog;
+    LinearLayout loginButtonsLayout;
+
     private FirebaseUser user;
 
 
@@ -64,7 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         signInButton = (com.google.android.gms.common.SignInButton)findViewById(R.id.sign_in_button);
-
+        loginButtonsLayout = (LinearLayout) findViewById(R.id.login_buttons_layout);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Signing in..");
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -100,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         facebook_login_button.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                //  Toast.makeText(getApplicationContext(), "" + loginResult, Toast.LENGTH_SHORT).show();
+                showProgressDialog();
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
 
@@ -125,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                     goToUserProfileScreen();
                     finish();
 
@@ -150,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
+                showProgressDialog();
+
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
 
@@ -177,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
+                            hideProgressDialog();
                         }
                     }
                 });
@@ -185,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void handleFacebookAccessToken(AccessToken token) {
-        // Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
@@ -195,11 +203,8 @@ public class MainActivity extends AppCompatActivity {
 
                         if (!task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "" + task.getException(), Toast.LENGTH_LONG).show();
-                        }
-
-                        else if (task.isSuccessful()){
-                            goToUserProfileScreen();
-                            finish();
+                            LoginManager.getInstance().logOut();
+                            hideProgressDialog();
                         }
                     }
                 });
@@ -226,10 +231,21 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this,PersonProfile.class);
         intent.putExtra("username",user.getDisplayName());
         intent.putExtra("usermail",user.getEmail());
-        intent.putExtra("userimageurl",user.getPhotoUrl().toString());
+        intent.putExtra("userimageurl",user.getPhotoUrl());
         startActivity(intent);
     }
 
+
+    public void showProgressDialog(){
+        loginButtonsLayout.setVisibility(View.GONE);
+        progressDialog.show();
+        progressDialog.setCancelable(false);
+    }
+
+    public void hideProgressDialog(){
+        progressDialog.hide();
+        loginButtonsLayout.setVisibility(View.VISIBLE);
+    }
 
 
 }
