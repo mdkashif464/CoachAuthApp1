@@ -24,12 +24,18 @@
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:text="Name : "
-        android:textSize="22sp"/>
+        android:textSize="22sp"
+        android:gravity="center"
+        android:layout_marginTop="20dp"/>
 
     <TextView
-    android:id="@+id/usermail_tv"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-        android:textStyle="bold"/>
+        android:id="@+id/usermail_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:text="E-mail : "
+        android:gravity="center"
+        android:layout_marginTop="20dp"/>
 
 </LinearLayout>
