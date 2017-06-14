@@ -229,9 +229,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToUserProfileScreen(){
         Intent intent = new Intent(MainActivity.this,PersonProfile.class);
+        intent.putExtra("uniqueregid", user.getUid());
         intent.putExtra("username",user.getDisplayName());
-        intent.putExtra("usermail",user.getEmail());
-        intent.putExtra("userimageurl",user.getPhotoUrl());
+        if (user.getEmail() == null){
+            intent.putExtra("usermail","-");
+        }
+        else {
+            intent.putExtra("usermail",user.getEmail());
+        }
+        intent.putExtra("userimageurl",user.getPhotoUrl().toString());
         startActivity(intent);
     }
 

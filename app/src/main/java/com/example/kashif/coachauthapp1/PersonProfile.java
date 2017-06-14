@@ -14,42 +14,51 @@ import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PersonProfile extends AppCompatActivity {
 
 
-    String username;
-    String usermail;
-    String userimageurl;
+    private String username;
+    private String usermail;
+    private String userimageurl;
+    private String uniqueUserId;
 
-    TextView username_tv;
-    TextView usermail_tv;
-    ImageView userimage_iv;
+    private TextView username_tv;
+    private TextView usermail_tv;
+    private ImageView userimage_iv;
 
-
+    private DatabaseReference databaseReference;
 
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person_profile);
 
 
-        username_tv = (TextView)findViewById(R.id.username_tv);
-        usermail_tv = (TextView)findViewById(R.id.usermail_tv);
+        username_tv = (TextView) findViewById(R.id.username_tv);
+        usermail_tv = (TextView) findViewById(R.id.usermail_tv);
         userimage_iv = (ImageView) findViewById(R.id.user_image_iv);
 
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails");
 
-        Bundle Bundle= getIntent().getExtras();
-        if (Bundle!=null){
+
+        Bundle Bundle = getIntent().getExtras();
+        if (Bundle != null) {
             username = Bundle.getString("username");
+            uniqueUserId = Bundle.getString("uniqueregid");
             usermail = Bundle.getString("usermail");
             userimageurl = Bundle.getString("userimageurl");
         }
 
 
-        getSupportActionBar().setTitle("WELCOME "+username);
-
+        getSupportActionBar().setTitle("WELCOME " + username);
 
 
         username_tv.append(username);
@@ -60,6 +69,14 @@ public class PersonProfile extends AppCompatActivity {
                 .resize(150, 150)
                 .centerInside()
                 .into(userimage_iv);
+
+        HashMap<String,Object> userDetails = new HashMap<>();
+        userDetails.put("Name",username);
+        userDetails.put("Email",usermail);
+        userDetails.put("ProfileImageUrl",userimageurl);
+
+        databaseReference.child(uniqueUserId).setValue(userDetails);
+
 
 
     }
@@ -76,8 +93,8 @@ public class PersonProfile extends AppCompatActivity {
 
         int selectedItemId = item.getItemId();
 
-        switch (selectedItemId){
-            case R.id.action_logout :{
+        switch (selectedItemId) {
+            case R.id.action_logout: {
                 FirebaseAuth.getInstance().signOut();
                 LoginManager.getInstance().logOut();
                 goToLoginScreen();
