@@ -92,31 +92,6 @@ public class PersonProfile extends AppCompatActivity {
         databaseReference.child(uniqueUserId).setValue(userDetails);
 
 
-
-        Query Q = databaseReference.orderByChild("Name").startAt("Ay").limitToFirst(10);
-
-        final FirebaseRecyclerAdapter<UserModel,AllUserListViewHolder> firebaseRecyclerAdapter = new
-                FirebaseRecyclerAdapter<UserModel, AllUserListViewHolder>(    UserModel.class,
-                        R.layout.user_list_model_layout,
-                        AllUserListViewHolder.class,
-                        Q) {
-
-
-                    @Override
-                    protected void populateViewHolder(AllUserListViewHolder viewHolder, UserModel model, int position) {
-
-                        if (model.getEmail().equals(usermail)){
-                            viewHolder.setTitle(model.getName());
-                            viewHolder.userMail_tv.setVisibility(View.GONE);
-                        }
-                        else {
-                            viewHolder.setTitle(model.getName());
-                            viewHolder.setDesc(model.getEmail());
-                        }
-                    }
-                };
-
-        userLIstRecyclerView.setAdapter(firebaseRecyclerAdapter);
     }
 
 
