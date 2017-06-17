@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -45,6 +46,7 @@ import static com.example.kashif.coachauthapp1.R.id.image;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 1 ;
 
@@ -66,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         signInButton = (com.google.android.gms.common.SignInButton)findViewById(R.id.sign_in_button);
         loginButtonsLayout = (LinearLayout) findViewById(R.id.login_buttons_layout);

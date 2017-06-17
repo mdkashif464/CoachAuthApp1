@@ -15,7 +15,7 @@
     <ImageView
         android:id="@+id/user_image_iv"
         android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_height="151dp"
         android:layout_gravity="center"/>
 
     <TextView
@@ -37,5 +37,11 @@
         android:text="E-mail : "
         android:gravity="center"
         android:layout_marginTop="20dp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/user_list_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 
 </LinearLayout>
