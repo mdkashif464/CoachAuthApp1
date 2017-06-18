@@ -41,6 +41,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".FollowPeopleActivity"></activity>
+        <activity android:name=".FollowersActivity"></activity>
+        <activity android:name=".FollowingActivity"></activity>
     </application>
 
 </manifest>

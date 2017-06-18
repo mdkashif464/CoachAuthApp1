@@ -1,6 +1,7 @@
 package com.example.kashif.coachauthapp1;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -41,6 +44,9 @@ public class PersonProfile extends AppCompatActivity {
 
     private DatabaseReference databaseReference;
 
+    private Button followingButton;
+    private  Button  followerButtton;
+
     private RecyclerView userLIstRecyclerView;
 
     @Override
@@ -52,14 +58,30 @@ public class PersonProfile extends AppCompatActivity {
 
 
 
-        username_tv = (TextView) findViewById(R.id.username_tv);
-        usermail_tv = (TextView) findViewById(R.id.usermail_tv);
-        userimage_iv = (ImageView) findViewById(R.id.user_image_iv);
+        username_tv = (TextView) findViewById(R.id.user_profile_name_tv);
+        usermail_tv = (TextView) findViewById(R.id.user_profile_email_tv);
+        userimage_iv = (ImageView) findViewById(R.id.user_profile_imageview);
+        followerButtton = (Button) findViewById(R.id.profile_followers_bt);
+        followingButton = (Button) findViewById( R.id.profile_following_bt);
 
-        userLIstRecyclerView =(RecyclerView)findViewById(R.id.user_list_recycler_view);
-        userLIstRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
+
+
+        CircularImageView userimage_iv = (CircularImageView)findViewById(R.id.user_profile_imageview);
+// Set Border
+        userimage_iv.setBorderColor(getResources().getColor(R.color.com_facebook_button_background_color));
+        userimage_iv.setBorderWidth(10);
+        userimage_iv.setShadowRadius(1);
+
+
+//        userLIstRecyclerView =(RecyclerView)findViewById(R.id.);
+//        userLIstRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails");
+
+
+
 
 
 
@@ -90,6 +112,22 @@ public class PersonProfile extends AppCompatActivity {
         userDetails.put("ProfileImageUrl",userimageurl);
 
         databaseReference.child(uniqueUserId).setValue(userDetails);
+
+followingButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Intent followingIntent = new Intent(PersonProfile.this,FollowingActivity.class);
+        startActivity(followingIntent);
+    }
+});
+
+        followerButtton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent followerIntent = new Intent(PersonProfile.this,FollowersActivity.class);
+                startActivity(followerIntent);
+            }
+        });
 
 
     }

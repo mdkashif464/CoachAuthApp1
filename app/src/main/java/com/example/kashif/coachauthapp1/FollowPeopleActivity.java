@@ -7,9 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.SearchView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -23,6 +25,10 @@ public class FollowPeopleActivity extends AppCompatActivity {
 
     private DatabaseReference mdatabaseReference;
 
+    private FirebaseUser user;
+    private FirebaseAuth mAuth;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +38,8 @@ public class FollowPeopleActivity extends AppCompatActivity {
         allUsersListSearchView = (SearchView) findViewById(R.id.all_users_searchiew);
         allUsersSearchButton = (Button) findViewById(R.id.all_users_search_button);
         allUsersListRecyclerView = (RecyclerView) findViewById(R.id.all_user_list_recyclerview);
+
+
 
         allUsersListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -55,7 +63,7 @@ public class FollowPeopleActivity extends AppCompatActivity {
                 new FirebaseRecyclerAdapter<UserModel, AllUserListViewHolder>(UserModel.class, R.layout.all_users_list_recyclerview_layout, AllUserListViewHolder.class, query) {
 
             @Override
-            protected void populateViewHolder(AllUserListViewHolder viewHolder, UserModel model, int position) {
+            protected void populateViewHolder(final AllUserListViewHolder viewHolder, UserModel model, int position) {
 
                 if (model.getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
                     viewHolder.followUserButton.setText("It's you");
@@ -64,6 +72,7 @@ public class FollowPeopleActivity extends AppCompatActivity {
 
                 viewHolder.setUserProfileImage(model.getProfileImageUrl());
                 viewHolder.setName(model.getName());
+
             }
         };
         allUsersListRecyclerView.setAdapter(firebaseRecyclerAdapter);

@@ -18,7 +18,7 @@
     android:orientation="horizontal">
 
     <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/profile_image_iv"
+        android:id="@+id/user_profile_imageview"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:src="@mipmap/ic_launcher"
@@ -27,6 +27,7 @@
         app:civ_shadow="true"
         app:civ_shadow_radius="10"
         app:civ_shadow_color="#8BC34A"/>
+
 
     <LinearLayout
         android:layout_width="match_parent"
