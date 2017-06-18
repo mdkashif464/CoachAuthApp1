@@ -242,13 +242,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
+    // method to show progress dialog while signing in
     public void showProgressDialog(){
         loginButtonsLayout.setVisibility(View.GONE);
         progressDialog.show();
         progressDialog.setCancelable(false);
     }
 
+    // method to show progress dialog
     public void hideProgressDialog(){
         progressDialog.hide();
         loginButtonsLayout.setVisibility(View.VISIBLE);
