@@ -38,4 +38,19 @@ public class UserModel {
         ProfileImageUrl = profileImageUrl;
     }
 
+    public String getAchievemants() {
+        return Achievemants;
+    }
+
+    public void setAchievemants(String achievemants) {
+        Achievemants = achievemants;
+    }
+
+    public String getSkills() {
+        return Skills;
+    }
+
+    public void setSkills(String skills) {
+        Skills = skills;
+    }
 }
