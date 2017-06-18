@@ -30,7 +30,7 @@ public class FollowingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_following);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails/"+currentUser.getUid()+"/MyFollowers");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails/"+currentUser.getUid()+"/MyFollowing");
 
         followingListRecyclerView =(RecyclerView)findViewById(R.id.following_recycler_listView);
         followingListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -64,6 +64,7 @@ public class FollowingActivity extends AppCompatActivity {
         inflater.inflate(R.menu.following_activity_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -71,12 +72,11 @@ public class FollowingActivity extends AppCompatActivity {
 
         switch (selectedItemId) {
             case R.id.action_add_following: {
-              //  Intent followeringIntent = new Intent(FollowingActivity.this,ABCD.class);
-              //  startActivity(followeringIntent);
+                Intent followingIntent = new Intent(FollowingActivity.this,FollowPeopleActivity.class);
+                startActivity(followingIntent);
 
             }
         }
-
         return super.onOptionsItemSelected(item);
 
     }

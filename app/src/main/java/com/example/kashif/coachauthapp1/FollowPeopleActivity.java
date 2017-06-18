@@ -19,15 +19,14 @@ import com.google.firebase.database.Query;
 public class FollowPeopleActivity extends AppCompatActivity {
 
 
+
     private SearchView allUsersListSearchView;
     private Button allUsersSearchButton;
     private RecyclerView allUsersListRecyclerView;
 
     private DatabaseReference mdatabaseReference;
 
-    private FirebaseUser user;
-    private FirebaseAuth mAuth;
-
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +38,10 @@ public class FollowPeopleActivity extends AppCompatActivity {
         allUsersSearchButton = (Button) findViewById(R.id.all_users_search_button);
         allUsersListRecyclerView = (RecyclerView) findViewById(R.id.all_user_list_recyclerview);
 
-
-
         allUsersListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mdatabaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails");
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
 
         allUsersSearchButton.setOnClickListener(new View.OnClickListener() {
@@ -62,19 +60,30 @@ public class FollowPeopleActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<UserModel, AllUserListViewHolder> firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<UserModel, AllUserListViewHolder>(UserModel.class, R.layout.all_users_list_recyclerview_layout, AllUserListViewHolder.class, query) {
 
-            @Override
-            protected void populateViewHolder(final AllUserListViewHolder viewHolder, UserModel model, int position) {
+                    @Override
+                    protected void populateViewHolder(AllUserListViewHolder viewHolder, final UserModel model, int position) {
 
-                if (model.getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
-                    viewHolder.followUserButton.setText("It's you");
-                    viewHolder.followUserButton.setClickable(false);
-                }
+                        if (model.getUniqueUserId().equals(currentUser.getUid())){
+                            viewHolder.followUserButton.setVisibility(View.GONE);
+                        }
 
-                viewHolder.setUserProfileImage(model.getProfileImageUrl());
-                viewHolder.setName(model.getName());
-
-            }
-        };
+                        viewHolder.setUserProfileImage(model.getProfileImageUrl());
+                        viewHolder.setName(model.getName());
+                        viewHolder.followUserButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Toast.makeText(getApplicationContext(),"Followed "+model.getName(),Toast.LENGTH_SHORT).show();
+                                addUserToMyFollowingList(currentUser.getUid(), model.getUniqueUserId());
+                            }
+                        });
+                    }
+                };
         allUsersListRecyclerView.setAdapter(firebaseRecyclerAdapter);
+    }
+
+    public void addUserToMyFollowingList(String currentUserUniqueId, String selectedUserUniqueId){
+        mdatabaseReference.child(currentUserUniqueId+"/MyFollownig").child(selectedUserUniqueId).setValue(selectedUserUniqueId);
+        mdatabaseReference.child(selectedUserUniqueId+"/MyFollowers").child(currentUserUniqueId).setValue(currentUserUniqueId);
+
     }
 }

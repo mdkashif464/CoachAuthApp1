@@ -21,9 +21,12 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -31,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PersonProfile extends AppCompatActivity {
+
 
 
     private String username;
@@ -41,13 +45,12 @@ public class PersonProfile extends AppCompatActivity {
     private TextView username_tv;
     private TextView usermail_tv;
     private ImageView userimage_iv;
+    private Button followers_bt;
+    private Button following_bt;
 
     private DatabaseReference databaseReference;
+    private DatabaseReference currentUserDatabaseReference;
 
-    private Button followingButton;
-    private  Button  followerButtton;
-
-    private RecyclerView userLIstRecyclerView;
 
     @Override
 
@@ -56,33 +59,22 @@ public class PersonProfile extends AppCompatActivity {
         setContentView(R.layout.activity_person_profile);
 
 
-
-
         username_tv = (TextView) findViewById(R.id.user_profile_name_tv);
         usermail_tv = (TextView) findViewById(R.id.user_profile_email_tv);
-        userimage_iv = (ImageView) findViewById(R.id.user_profile_imageview);
-        followerButtton = (Button) findViewById(R.id.profile_followers_bt);
-        followingButton = (Button) findViewById( R.id.profile_following_bt);
+        followers_bt = (Button)findViewById(R.id.profile_followers_bt);
+        following_bt = (Button)findViewById(R.id.profile_following_bt);
 
 
-
-
-
-        CircularImageView userimage_iv = (CircularImageView)findViewById(R.id.user_profile_imageview);
-// Set Border
-        userimage_iv.setBorderColor(getResources().getColor(R.color.com_facebook_button_background_color));
-        userimage_iv.setBorderWidth(10);
-        userimage_iv.setShadowRadius(1);
-
-
-//        userLIstRecyclerView =(RecyclerView)findViewById(R.id.);
-//        userLIstRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails");
 
 
 
+        CircularImageView userimage_iv = (CircularImageView)findViewById(R.id.user_profile_imageview);
 
+        userimage_iv.setBorderColor(getResources().getColor(R.color.com_facebook_button_background_color));
+        userimage_iv.setBorderWidth(10);
+        userimage_iv.setShadowRadius(1);
 
 
         Bundle Bundle = getIntent().getExtras();
@@ -101,36 +93,67 @@ public class PersonProfile extends AppCompatActivity {
         usermail_tv.append(usermail);
         Picasso.with(PersonProfile.this)
                 .load(userimageurl)
-                .placeholder(R.mipmap.ic_launcher)
-                .resize(150, 150)
-                .centerInside()
                 .into(userimage_iv);
 
-        HashMap<String,Object> userDetails = new HashMap<>();
-        userDetails.put("Name",username);
-        userDetails.put("Email",usermail);
-        userDetails.put("ProfileImageUrl",userimageurl);
+        final HashMap<String, Object> userDetails = new HashMap<>();
+        userDetails.put("UniqueUserId", uniqueUserId);
+        userDetails.put("Name", username);
+        userDetails.put("Email", usermail);
+        userDetails.put("ProfileImageUrl", userimageurl);
 
-        databaseReference.child(uniqueUserId).setValue(userDetails);
 
-followingButton.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Intent followingIntent = new Intent(PersonProfile.this,FollowingActivity.class);
-        startActivity(followingIntent);
-    }
-});
-
-        followerButtton.setOnClickListener(new View.OnClickListener() {
+        databaseReference.child(uniqueUserId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                Intent followerIntent = new Intent(PersonProfile.this,FollowersActivity.class);
-                startActivity(followerIntent);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() == 0){
+                    databaseReference.child(uniqueUserId).setValue(userDetails);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
 
 
+        currentUserDatabaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails/"+FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        currentUserDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String skills = dataSnapshot.child("Skills").getValue(String.class);
+                String achievements = dataSnapshot.child("Achievements").getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+        followers_bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent followersIntent = new Intent(PersonProfile.this,FollowersActivity.class);
+                startActivity(followersIntent);
+            }
+        });
+
+
+
+        following_bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent followingIntent = new Intent(PersonProfile.this,FollowingActivity.class);
+                startActivity(followingIntent);
+            }
+        });
     }
+
 
 
     @Override
@@ -164,4 +187,3 @@ followingButton.setOnClickListener(new View.OnClickListener() {
         startActivity(intent);
     }
 }
-
