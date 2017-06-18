@@ -48,8 +48,6 @@ public class PersonProfile extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private DatabaseReference currentUserDatabaseReference;
 
-    private RecyclerView userLIstRecyclerView;
-
 
 
     @Override
@@ -62,12 +60,10 @@ public class PersonProfile extends AppCompatActivity {
         username_tv = (TextView) findViewById(R.id.user_profile_name_tv);
         usermail_tv = (TextView) findViewById(R.id.user_profile_email_tv);
         userimage_iv = (ImageView) findViewById(R.id.profile_image);
-        followers_bt = (Button)findViewById(R.id.profile_following_bt);
+        followers_bt = (Button)findViewById(R.id.profile_followers_bt);
         following_bt = (Button)findViewById(R.id.profile_following_bt);
 
 
-//        userLIstRecyclerView =(RecyclerView)findViewById(R.id.user_list_recycler_view);
-//        userLIstRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails");
 
@@ -91,39 +87,16 @@ public class PersonProfile extends AppCompatActivity {
                 .into(userimage_iv);
 
         HashMap<String, Object> userDetails = new HashMap<>();
+        userDetails.put("UniqueUserId", uniqueUserId);
         userDetails.put("Name", username);
         userDetails.put("Email", usermail);
         userDetails.put("ProfileImageUrl", userimageurl);
 
 
-         databaseReference.child(uniqueUserId).setValue(userDetails);
+        databaseReference.child(uniqueUserId).setValue(userDetails);
 
 
-//        Query Q = databaseReference.orderByChild("Name").startAt("Ay").limitToFirst(10);
-//
-//        final FirebaseRecyclerAdapter<UserModel,AllUserListViewHolder> firebaseRecyclerAdapter = new
-//                FirebaseRecyclerAdapter<UserModel, AllUserListViewHolder>(    UserModel.class,
-//                        R.layout.user_list_model_layout,
-//                        AllUserListViewHolder.class,
-//                        Q) {
-//
-//
-//                    @Override
-//                    protected void populateViewHolder(AllUserListViewHolder viewHolder, UserModel model, int position) {
-//
-//                        if (model.getEmail().equals(usermail)){
-//                            viewHolder.setTitle(model.getName());
-//                            viewHolder.userMail_tv.setVisibility(View.GONE);
-//                        }
-//                        else {
-//                            viewHolder.setTitle(model.getName());
-//                            viewHolder.setDesc(model.getEmail());
-//                        }
-//                    }
-//                };
-//
-//        userLIstRecyclerView.setAdapter(firebaseRecyclerAdapter);
-//    }
+
         currentUserDatabaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails/"+FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         currentUserDatabaseReference.addValueEventListener(new ValueEventListener() {
@@ -140,22 +113,29 @@ public class PersonProfile extends AppCompatActivity {
         });
 
 
+
+
         followers_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent followersIntent = new Intent(PersonProfile.this,FollowingActivity.class);
+                Intent followersIntent = new Intent(PersonProfile.this,FollowersActivity.class);
                 startActivity(followersIntent);
             }
         });
 
+
+
         following_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent followeringIntent = new Intent(PersonProfile.this,FollowingActivity.class);
-                startActivity(followeringIntent);
+                Intent followingIntent = new Intent(PersonProfile.this,FollowingActivity.class);
+                startActivity(followingIntent);
             }
         });
     }
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

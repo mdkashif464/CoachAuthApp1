@@ -26,6 +26,7 @@ public class AllUserListViewHolder extends RecyclerView.ViewHolder {
         userNameTextView = (TextView) itemView.findViewById(R.id.user_name_textview);
         followUserButton = (Button) itemView.findViewById(R.id.follow_user_button);
 
+
     }
 
 

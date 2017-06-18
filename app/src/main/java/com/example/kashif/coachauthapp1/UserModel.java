@@ -6,6 +6,7 @@ package com.example.kashif.coachauthapp1;
 
 public class UserModel {
 
+    private String UniqueUserId;
     private String Name;
     private String Email;
     private String ProfileImageUrl;
@@ -13,6 +14,15 @@ public class UserModel {
     private String Skills;
     private String FollowingUsers;
     private String Followers;
+
+
+    public String getUniqueUserId(){
+        return UniqueUserId;
+    }
+
+    public void setUniqueUserId(String uniqueUserId){
+        this.UniqueUserId = uniqueUserId;
+    }
 
     public String getName() {
         return Name;
