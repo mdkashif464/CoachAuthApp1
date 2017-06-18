@@ -1,6 +1,7 @@
 package com.example.kashif.coachauthapp1;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -61,9 +63,20 @@ public class PersonProfile extends AppCompatActivity {
 
         username_tv = (TextView) findViewById(R.id.user_profile_name_tv);
         usermail_tv = (TextView) findViewById(R.id.user_profile_email_tv);
-        userimage_iv = (ImageView) findViewById(R.id.profile_image);
+      //  userimage_iv = (ImageView) findViewById(R.id.profile_image);
         followers_bt = (Button)findViewById(R.id.profile_following_bt);
         following_bt = (Button)findViewById(R.id.profile_following_bt);
+
+
+        CircularImageView userimage_iv = (CircularImageView)findViewById(R.id.profile_image_iv);
+// Set Border
+        userimage_iv.setBorderColor(getResources().getColor(R.color.com_facebook_blue));
+        userimage_iv.setBorderWidth(10);
+// Add Shadow with default param
+        //userimage_iv.addShadow();
+// or with custom param
+        userimage_iv.setShadowRadius(1);
+     //   userimage_iv.setShadowColor(Color.RED);
 
 
 //        userLIstRecyclerView =(RecyclerView)findViewById(R.id.user_list_recycler_view);
