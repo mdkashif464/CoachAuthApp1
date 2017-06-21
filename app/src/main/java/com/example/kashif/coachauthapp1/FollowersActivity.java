@@ -24,7 +24,7 @@ public class FollowersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followers);
 
-        previouslyFollowing = (ImageView)findViewById(R.id.previously_following_iv);
+      //  previouslyFollowing = (ImageView)findViewById(R.id.previously_following_iv);
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails");
 
@@ -34,7 +34,7 @@ public class FollowersActivity extends AppCompatActivity {
 
 
 
-        FirebaseRecyclerAdapter<UserModel, FollowerViewHolder> firebaseRecyclerAdapter =
+        /*FirebaseRecyclerAdapter<UserModel, FollowerViewHolder> firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<UserModel, FollowerViewHolder>
                         (UserModel.class, R.layout.all_followers_list_recycler_view, FollowerViewHolder.class, databaseReference) {
 
@@ -51,6 +51,6 @@ public class FollowersActivity extends AppCompatActivity {
 
                     }
                 };
-        followersListRecyclerView.setAdapter(firebaseRecyclerAdapter);
+        followersListRecyclerView.setAdapter(firebaseRecyclerAdapter);*/
     }
 }

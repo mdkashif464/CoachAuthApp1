@@ -44,7 +44,7 @@ public class PersonProfile extends AppCompatActivity {
 
     private TextView username_tv;
     private TextView usermail_tv;
-    private ImageView userimage_iv;
+ //   private ImageView userimage_iv;
     private Button followers_bt;
     private Button following_bt;
 

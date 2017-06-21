@@ -22,7 +22,7 @@ public class AllUserListViewHolder extends RecyclerView.ViewHolder {
     public AllUserListViewHolder(View itemView) {
         super(itemView);
 
-        userProfileImageView = (ImageView) itemView.findViewById(R.id.user_profile_imageview);
+        userProfileImageView = (ImageView) itemView.findViewById(R.id.userprofile_imageview);
         userNameTextView = (TextView) itemView.findViewById(R.id.user_name_textview);
         followUserButton = (Button) itemView.findViewById(R.id.follow_user_button);
 

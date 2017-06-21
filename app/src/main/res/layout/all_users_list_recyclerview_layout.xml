@@ -6,7 +6,7 @@
     android:layout_marginTop="8dp">
 
     <ImageView
-        android:id="@+id/user_profile_imageview"
+        android:id="@+id/userprofile_imageview"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:scaleType="centerInside"/>

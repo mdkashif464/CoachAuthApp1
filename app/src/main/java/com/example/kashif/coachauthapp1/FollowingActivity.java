@@ -14,8 +14,11 @@ import com.facebook.login.LoginManager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class FollowingActivity extends AppCompatActivity {
 
@@ -30,31 +33,47 @@ public class FollowingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_following);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails/"+currentUser.getUid()+"/MyFollowing");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails/" + currentUser.getUid() + "/MyFollowing");
 
-        followingListRecyclerView =(RecyclerView)findViewById(R.id.following_recycler_listView);
+        followingListRecyclerView = (RecyclerView) findViewById(R.id.following_recycler_listView);
         followingListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
 
-        FirebaseRecyclerAdapter<UserModel, FollowerViewHolder> firebaseRecyclerAdapter =
-                new FirebaseRecyclerAdapter<UserModel, FollowerViewHolder>
-                        (UserModel.class, R.layout.all_followers_list_recycler_view, FollowerViewHolder.class, databaseReference) {
-
-                    @Override
-                    protected void populateViewHolder(final FollowerViewHolder viewHolder, UserModel model, int position) {
-
-                        if (model.getEmail().equals(FirebaseAuth.getInstance().getCurrentUser().getEmail())){
-                            // previouslyFollowing.setVisibility(View.INVISIBLE);
-                        }
-
-                        viewHolder.setUserProfileImage(model.getProfileImageUrl());
-                        viewHolder.setName(model.getName());
 
 
-                    }
-                };
-        followingListRecyclerView.setAdapter(firebaseRecyclerAdapter);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    String myFollowingListUsers = childSnapshot.getValue().toString();
+
+                    FirebaseDatabase.getInstance().getReference().child("allUsersDetails/"+myFollowingListUsers)
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Toast.makeText(FollowingActivity.this, dataSnapshot.child("Name").getValue().toString(), Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+
 
     }
 
