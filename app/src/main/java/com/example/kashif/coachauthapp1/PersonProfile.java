@@ -1,12 +1,16 @@
 package com.example.kashif.coachauthapp1;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,16 +20,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.facebook.AccessToken;
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
 import com.google.firebase.auth.FirebaseAuth;
+
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+
 import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
@@ -36,21 +40,40 @@ import java.util.Map;
 public class PersonProfile extends AppCompatActivity {
 
 
-
     private String username;
     private String usermail;
     private String userimageurl;
     private String uniqueUserId;
+    private String selected_primary_skill;
+    private String selected_secondary_skill;
+    private String shared_preference_uniqueUserId;
 
     private TextView username_tv;
     private TextView usermail_tv;
-    private ImageView userimage_iv;
+    private TextView user_skills_tv;
+    private TextView user_achievement_tv;
+    private TextView user_role_tv;
+    private TextView user_dob_tv;
+    private TextView user_batting_style_tv;
+    private TextView user_bowling_style_tv;
+    private TextView user_current_city_tv;
+    private  TextView user_follower_no_tv;
+    private TextView user_following_no_tv;
+
+
     private Button followers_bt;
     private Button following_bt;
 
+    SharedPreferences sharedPreferences;
+
     private DatabaseReference databaseReference;
     private DatabaseReference currentUserDatabaseReference;
+    FollowerAdapter followerAdapter;
 
+    private FirebaseUser user;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    public static final String MyPREFERENCES = "MyPrefs" ;
 
     @Override
 
@@ -61,20 +84,35 @@ public class PersonProfile extends AppCompatActivity {
 
         username_tv = (TextView) findViewById(R.id.user_profile_name_tv);
         usermail_tv = (TextView) findViewById(R.id.user_profile_email_tv);
-        followers_bt = (Button)findViewById(R.id.profile_followers_bt);
-        following_bt = (Button)findViewById(R.id.profile_following_bt);
+        user_skills_tv = (TextView) findViewById(R.id.user_profile_skill_tv);
+        user_achievement_tv = (TextView) findViewById(R.id.user_profile_achievements_tv);
+        user_dob_tv = (TextView) findViewById(R.id.user_profile_dob_tv);
+        user_current_city_tv = (TextView) findViewById(R.id.user_profile_address_city_tv);
+        user_role_tv = (TextView) findViewById(R.id.user_profile_role__tv);
+        user_batting_style_tv = (TextView) findViewById(R.id.user_batting_style__tv);
+        user_bowling_style_tv = (TextView) findViewById(R.id.user_bowling_style__tv);
+        user_follower_no_tv =(TextView)findViewById(R.id.user_follower_no_tv);
+        user_following_no_tv =(TextView)findViewById(R.id.user_following_no_tv);
+        followerAdapter = new FollowerAdapter();
+        followerAdapter.getItemCount();
+        Log.d("ankur","size is"+followerAdapter.getItemCount());
 
+        followers_bt = (Button) findViewById(R.id.profile_followers_bt);
+        following_bt = (Button) findViewById(R.id.profile_following_button);
 
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails");
 
 
-
-        CircularImageView userimage_iv = (CircularImageView)findViewById(R.id.user_profile_imageview);
+        final CircularImageView userimage_iv = (CircularImageView) findViewById(R.id.user_profile_imageview);
 
         userimage_iv.setBorderColor(getResources().getColor(R.color.com_facebook_button_background_color));
         userimage_iv.setBorderWidth(10);
         userimage_iv.setShadowRadius(1);
+
+
+        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
 
         Bundle Bundle = getIntent().getExtras();
@@ -83,14 +121,28 @@ public class PersonProfile extends AppCompatActivity {
             uniqueUserId = Bundle.getString("uniqueregid");
             usermail = Bundle.getString("usermail");
             userimageurl = Bundle.getString("userimageurl");
+
+        }
+        editor.putString("uniqueUserId",uniqueUserId);
+        editor.commit();
+        SharedPreferences settings = this.getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        shared_preference_uniqueUserId = settings.getString("uniqueUserId", "null");
+        Log.d("ankur", "result is id " + FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+        Bundle UserEditProfileActivityBundle = getIntent().getExtras();
+        if (Bundle != null) {
+            selected_primary_skill = UserEditProfileActivityBundle.getString("selcted_primary_skill");
+            selected_secondary_skill = UserEditProfileActivityBundle.getString("selected_secondary_skill");
+
         }
 
 
         getSupportActionBar().setTitle("WELCOME " + username);
 
 
-        username_tv.append(username);
-        usermail_tv.append(usermail);
+        username_tv.setText(username);
+        usermail_tv.setText(usermail);
         Picasso.with(PersonProfile.this)
                 .load(userimageurl)
                 .into(userimage_iv);
@@ -100,12 +152,13 @@ public class PersonProfile extends AppCompatActivity {
         userDetails.put("Name", username);
         userDetails.put("Email", usermail);
         userDetails.put("ProfileImageUrl", userimageurl);
+//        Log.d("ankur",uniqueUserId);
 
 
-        databaseReference.child(uniqueUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() == 0){
+                if (dataSnapshot.getChildrenCount() == 0) {
                     databaseReference.child(uniqueUserId).setValue(userDetails);
                 }
             }
@@ -117,13 +170,38 @@ public class PersonProfile extends AppCompatActivity {
         });
 
 
-        currentUserDatabaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails/"+FirebaseAuth.getInstance().getCurrentUser().getUid());
+        currentUserDatabaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails/" + FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         currentUserDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String skills = dataSnapshot.child("Skills").getValue(String.class);
-                String achievements = dataSnapshot.child("Achievements").getValue(String.class);
+                long user_follower_no =dataSnapshot.child("MyFollowers").getChildrenCount();
+                long user_following_no = dataSnapshot.child("MyFollowing").getChildrenCount();
+                String user_name  = dataSnapshot.child("Name").getValue(String.class);
+                String user_image_url = dataSnapshot.child("ProfileImageUrl").getValue(String.class);
+                String user_email = dataSnapshot.child("Email").getValue(String.class);
+                String user_dob = dataSnapshot.child("user_dob").getValue(String.class);
+                String user_role = dataSnapshot.child("user_role").getValue(String.class);
+                String user_current_city = dataSnapshot.child("user_address_city").getValue(String.class);
+                String user_batting_style = dataSnapshot.child("user_batting_hand").getValue(String.class);
+                String user_bowling_style = dataSnapshot.child("user_bowling_hand").getValue(String.class);
+                String skills = dataSnapshot.child("user_skills").getValue(String.class);
+                String achievements = dataSnapshot.child("user_achievement").getValue(String.class);
+                user_follower_no_tv.setText(""+user_follower_no);
+                user_following_no_tv.setText(""+user_following_no);
+                user_dob_tv.setText(user_dob);
+                user_role_tv.setText(user_role);
+                username_tv.setText(user_name);
+                usermail_tv.setText(user_email);
+                Picasso.with(PersonProfile.this)
+                        .load(user_image_url)
+                        .into(userimage_iv);
+
+                user_current_city_tv.setText(user_current_city);
+                user_batting_style_tv.setText(user_batting_style);
+                user_bowling_style_tv.setText(user_bowling_style);
+                user_skills_tv.setText(skills);
+                user_achievement_tv.setText(achievements);
             }
 
             @Override
@@ -133,27 +211,23 @@ public class PersonProfile extends AppCompatActivity {
         });
 
 
-
-
         followers_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent followersIntent = new Intent(PersonProfile.this,FollowersActivity.class);
+                Intent followersIntent = new Intent(PersonProfile.this, FollowersActivity.class);
                 startActivity(followersIntent);
             }
         });
 
 
-
         following_bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent followingIntent = new Intent(PersonProfile.this,FollowingActivity.class);
+                Intent followingIntent = new Intent(PersonProfile.this, FollowingActivity.class);
                 startActivity(followingIntent);
             }
         });
     }
-
 
 
     @Override
@@ -175,6 +249,15 @@ public class PersonProfile extends AppCompatActivity {
                 goToLoginScreen();
                 finish();
                 break;
+            }
+            case R.id.user_profile_edit: {
+                Intent edit_your_profile_intent = new Intent(PersonProfile.this, UserEditProfileActivity.class);
+                edit_your_profile_intent.putExtra("username", username);
+                edit_your_profile_intent.putExtra("usermail", usermail);
+                edit_your_profile_intent.putExtra("userimageurl", userimageurl);
+                edit_your_profile_intent.putExtra("uniqueUserId", uniqueUserId);
+
+                startActivity(edit_your_profile_intent);
             }
         }
 

@@ -40,9 +40,10 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".FollowPeopleActivity"></activity>
-        <activity android:name=".FollowersActivity"></activity>
-        <activity android:name=".FollowingActivity"></activity>
+        <activity android:name=".FollowPeopleActivity" />
+        <activity android:name=".FollowersActivity" />
+        <activity android:name=".FollowingActivity" />
+        <activity android:name=".UserEditProfileActivity"></activity>
     </application>
 
 </manifest>

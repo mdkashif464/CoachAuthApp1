@@ -63,4 +63,20 @@ public class UserModel {
     public void setSkills(String skills) {
         Skills = skills;
     }
+
+    public String getFollowingUsers() {
+        return FollowingUsers;
+    }
+
+    public void setFollowingUsers(String followingUsers) {
+        FollowingUsers = followingUsers;
+    }
+
+    public String getFollowers() {
+        return Followers;
+    }
+
+    public void setFollowers(String followers) {
+        Followers = followers;
+    }
 }

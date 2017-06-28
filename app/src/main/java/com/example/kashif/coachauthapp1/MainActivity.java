@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         signInButton = (com.google.android.gms.common.SignInButton)findViewById(R.id.sign_in_button);
         loginButtonsLayout = (LinearLayout) findViewById(R.id.login_buttons_layout);
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Signing in..");
+        progressDialog.setMessage("Signing in...");
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))

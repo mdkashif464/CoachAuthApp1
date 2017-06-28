@@ -16,6 +16,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class FollowPeopleActivity extends AppCompatActivity {
 
 
@@ -82,7 +84,7 @@ public class FollowPeopleActivity extends AppCompatActivity {
     }
 
     public void addUserToMyFollowingList(String currentUserUniqueId, String selectedUserUniqueId){
-        mdatabaseReference.child(currentUserUniqueId+"/MyFollownig").child(selectedUserUniqueId).setValue(selectedUserUniqueId);
+        mdatabaseReference.child(currentUserUniqueId+"/MyFollowing").child(selectedUserUniqueId).setValue(selectedUserUniqueId);
         mdatabaseReference.child(selectedUserUniqueId+"/MyFollowers").child(currentUserUniqueId).setValue(currentUserUniqueId);
 
     }

@@ -10,6 +10,12 @@
         >
 
     </item>
+    <item
+        android:id="@+id/user_profile_edit"
+        android:icon="@mipmap/ic_launcher"
+        android:title="Edit your Profile"
+        app:showAsAction="always"
+        ></item>
 
 
 </menu>

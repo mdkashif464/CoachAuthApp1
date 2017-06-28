@@ -8,5 +8,12 @@
         android:icon="@drawable/logout_icon"
         android:orderInCategory="1"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/user_profile_edit"
+        android:icon="@mipmap/ic_launcher"
+        android:title="Edit your Profile"
+        app:showAsAction="always"
+        ></item>
+
 
 </menu>
