@@ -1,5 +1,7 @@
 package com.example.kashif.coachauthapp1;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -21,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
 import java.util.HashMap;
 
 public class UserEditProfileActivity extends AppCompatActivity {
@@ -42,6 +46,17 @@ public class UserEditProfileActivity extends AppCompatActivity {
     int selected_secondary_item_position;
 
     String unique_user_Id;
+
+    private TextView tvDisplayDate;
+    private DatePicker dpResult;
+    private Button btnChangeDate;
+
+    private int year;
+    private int month;
+    private int day;
+
+    static final int DATE_DIALOG_ID = 999;
+
 
 
     private TextView user_name_tv;
@@ -88,7 +103,7 @@ public class UserEditProfileActivity extends AppCompatActivity {
         user_image_iv = (ImageView) findViewById(R.id.user_image_iv);
 
 
-        user_dob_et = (EditText) findViewById(R.id.user_dob_et);
+      //  user_dob_et = (EditText) findViewById(R.id.user_dob_et);
         user_address_city_et = (EditText) findViewById(R.id.user_address_city_et);
         user_address_state_et = (EditText) findViewById(R.id.user_address_state_et);
         user_skill_et = (EditText) findViewById(R.id.user_skills_et);
@@ -108,6 +123,7 @@ public class UserEditProfileActivity extends AppCompatActivity {
             username = Bundle.getString("username");
             usermail = Bundle.getString("usermail");
             userimageurl = Bundle.getString("userimageurl");
+
             unique_user_Id = Bundle.getString("uniqueUserId");
         }
 
@@ -118,6 +134,7 @@ public class UserEditProfileActivity extends AppCompatActivity {
 
         user_name_tv.setText(username);
         user_email_tv.setText(usermail);
+        Toast.makeText(getApplicationContext(),"id"+unique_user_Id,Toast.LENGTH_SHORT).show();
 
 
         user_primary_skill_adapter = ArrayAdapter.createFromResource(this, R.array.user_primary_skill_set_array, android.R.layout.simple_spinner_item);
@@ -241,7 +258,7 @@ public class UserEditProfileActivity extends AppCompatActivity {
                 Log.d("ankur", "New value is" + user_dob);
                 Log.d("ankur", "New value is" + user_edit_profile_details);
                 dataStorage();
-                databaseReference.child(unique_user_Id).updateChildren(user_edit_profile_details);
+              //  databaseReference.child(unique_user_Id).updateChildren(user_edit_profile_details);
                 Log.d("ankur", "New value is 1" + user_edit_profile_details);
 
 
@@ -250,11 +267,85 @@ public class UserEditProfileActivity extends AppCompatActivity {
                 person_profile_intent.putExtra("selected_secondary_skill", selected_secondary_skill);
 
                 startActivity(person_profile_intent);
+                finish();
 
             }
 
         });
+
+        setCurrentDateOnView();
+        addListenerOnButton();
     }
+
+    public void setCurrentDateOnView() {
+
+        tvDisplayDate = (TextView) findViewById(R.id.tvDate);
+      //  dpResult = (DatePicker) findViewById(R.id.dpResult);
+
+        final Calendar c = Calendar.getInstance();
+        year = c.get(Calendar.YEAR);
+        month = c.get(Calendar.MONTH);
+        day = c.get(Calendar.DAY_OF_MONTH);
+
+        // set current date into textview
+        tvDisplayDate.setText(new StringBuilder()
+                // Month is 0 based, just add 1
+                .append(month + 1).append("-").append(day).append("-")
+                .append(year).append(" "));
+
+        // set current date into datepicker
+       // dpResult.init(year, month, day, null);
+
+    }
+
+    public void addListenerOnButton() {
+
+        btnChangeDate = (Button) findViewById(R.id.btnChangeDate);
+
+        btnChangeDate.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                showDialog(DATE_DIALOG_ID);
+
+            }
+
+        });
+
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DATE_DIALOG_ID:
+                // set date picker as current date
+                return new DatePickerDialog(this, datePickerListener,
+                        year, month,day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener datePickerListener
+            = new DatePickerDialog.OnDateSetListener() {
+
+        // when dialog box is closed, below method will be called.
+        public void onDateSet(DatePicker view, int selectedYear,
+                              int selectedMonth, int selectedDay) {
+            year = selectedYear;
+            month = selectedMonth;
+            day = selectedDay;
+
+            // set selected date into textview
+            tvDisplayDate.setText(new StringBuilder().append(month + 1)
+                    .append("-").append(day).append("-").append(year)
+                    .append(" "));
+
+            // set selected date into datepicker also
+          //  dpResult.init(year, month, day, null);
+
+        }
+    };
 
     public void dataStorage() {
         if (selected_secondary_skill == user_wicketkeeper) {
@@ -262,17 +353,14 @@ public class UserEditProfileActivity extends AppCompatActivity {
         } else {
             user_role = selcted_primary_skill;
         }
-        user_dob = user_dob_et.getText().toString();
+        user_dob = tvDisplayDate.getText().toString();
         user_skills = user_skill_et.getText().toString();
         user_achievement = user_achievement_et.getText().toString();
         user_address_city = user_address_city_et.getText().toString();
         Log.d("ankur", "give ans" + user_dob);
 
 
-        if (user_dob == null || user_address_city == null || user_skills == null || user_role == null || user_achievement == null || user_bowling_hand == null || user_bowling_hand == null ||
-                user_wicketkeeper == null) {
-            Toast.makeText(getApplicationContext(), "Please Enter all the details", Toast.LENGTH_SHORT).show();
-        } else {
+
 
             user_edit_profile_details = new HashMap<>();
             user_edit_profile_details.put("user_dob", user_dob);
@@ -285,7 +373,8 @@ public class UserEditProfileActivity extends AppCompatActivity {
             user_edit_profile_details.put("user_wicketkeeper", user_wicketkeeper);
             Log.d("ankur", "this is " + user_edit_profile_details);
             Log.d("ankur", "this is " + unique_user_Id);
+
+            databaseReference.child(unique_user_Id).updateChildren(user_edit_profile_details);
         }
     }
 
-}
