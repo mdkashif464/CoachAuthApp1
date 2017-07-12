@@ -68,6 +68,7 @@ public class FollowingActivity extends AppCompatActivity {
                 Log.d("ankur","Data changed called1");
 
                 Map<String, Object> map = (HashMap<String, Object>) dataSnapshot.getValue();
+//this is final  array list
 
                 int i = 0;
                 if(map == null){

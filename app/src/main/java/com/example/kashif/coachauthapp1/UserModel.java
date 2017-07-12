@@ -14,6 +14,7 @@ public class UserModel {
     private String Skills;
     private String FollowingUsers;
     private String Followers;
+    //all credentials
 
 
     public String getUniqueUserId(){

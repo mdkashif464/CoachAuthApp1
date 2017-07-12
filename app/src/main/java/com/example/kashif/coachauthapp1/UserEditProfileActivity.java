@@ -276,7 +276,7 @@ public class UserEditProfileActivity extends AppCompatActivity {
         setCurrentDateOnView();
         addListenerOnButton();
     }
-
+    //Calender
     public void setCurrentDateOnView() {
 
         tvDisplayDate = (TextView) findViewById(R.id.tvDate);

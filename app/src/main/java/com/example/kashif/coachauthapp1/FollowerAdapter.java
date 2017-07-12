@@ -36,7 +36,7 @@ public class FollowerAdapter extends RecyclerView.Adapter<FollowerAdapter.Follow
     }
 
 
-
+//this is final  array list
     @Override
     public void onBindViewHolder(FollowerViewHolder holder, final int position) {
       holder.user_name.setText(followersModels.get(position).getUser_name());

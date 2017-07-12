@@ -17,15 +17,9 @@ public class FollowingModel {
         return User_name;
     }
 
-    public void setUser_name(String user_name) {
-        User_name = user_name;
-    }
 
     public String getUser_image_Url() {
         return User_image_Url;
     }
 
-    public void setUser_image_Url(String user_image_Url) {
-        User_image_Url = user_image_Url;
-    }
 }

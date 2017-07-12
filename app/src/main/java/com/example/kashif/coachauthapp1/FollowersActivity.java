@@ -57,6 +57,7 @@ public class FollowersActivity extends AppCompatActivity {
         Array_followers_name = new ArrayList<>();
         followersListRecyclerView = (RecyclerView) findViewById(R.id.follower_recycler_listView);
         followersListRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//this is final  array list
 
         databaseReference.child("allUsersDetails/" + currentUser.getUid() + "/MyFollowers").addValueEventListener(new ValueEventListener() {
             @Override

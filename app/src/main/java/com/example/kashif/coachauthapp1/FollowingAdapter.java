@@ -40,6 +40,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
         Log.d("result1","calling");
         return new FollowingViewHolder(view);
     }
+//this is final  array list
 
     @Override
     public void onBindViewHolder(FollowingViewHolder holder, int position) {
