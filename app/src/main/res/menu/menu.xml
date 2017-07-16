@@ -10,7 +10,7 @@
         app:showAsAction="always"/>
     <item
         android:id="@+id/user_profile_edit"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/profile_edit_pic"
         android:title="Edit your Profile"
         app:showAsAction="always"
         ></item>

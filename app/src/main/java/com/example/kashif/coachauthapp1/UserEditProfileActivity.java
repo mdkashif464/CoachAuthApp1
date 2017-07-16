@@ -3,6 +3,7 @@ package com.example.kashif.coachauthapp1;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,7 +40,15 @@ public class UserEditProfileActivity extends AppCompatActivity {
     private String user_batting_hand;
     private String user_bowling_hand;
     private String user_wicketkeeper;
-    String selcted_primary_skill;
+    private String user_bundle_skills;
+    private String user_bundle_achievement;
+    private String user_bundle_address_city;
+    private String user_bundle_bowling_hand;
+    private String user_bundle_batting_hand;
+    private String user_bundle_role;
+    private String user_bundle_dob;
+
+    String selected_primary_skill;
     String selected_secondary_skill;
     String user_role;
     int selected_primary_item_position;
@@ -66,7 +75,7 @@ public class UserEditProfileActivity extends AppCompatActivity {
     private TextView user_bowling_style_tv;
     private EditText user_dob_et;
     private EditText user_address_city_et;
-    private EditText user_address_state_et;
+    //private EditText user_address_state_et;
     private EditText user_skill_et;
     private EditText user_achievement_et;
 
@@ -92,6 +101,11 @@ public class UserEditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_edit_profile);
 
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Edit Your Profile");
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("allUsersDetails");
 
 
@@ -99,13 +113,15 @@ public class UserEditProfileActivity extends AppCompatActivity {
         user_email_tv = (TextView) findViewById(R.id.user_email_tv);
         user_batting_style_tv = (TextView) findViewById(R.id.user_batting_style__tv);
         user_bowling_style_tv = (TextView) findViewById(R.id.user_bowling_style__tv);
+        tvDisplayDate = (TextView) findViewById(R.id.tvDate);
+
 
         user_image_iv = (ImageView) findViewById(R.id.user_image_iv);
 
 
       //  user_dob_et = (EditText) findViewById(R.id.user_dob_et);
         user_address_city_et = (EditText) findViewById(R.id.user_address_city_et);
-        user_address_state_et = (EditText) findViewById(R.id.user_address_state_et);
+     //   user_address_state_et = (EditText) findViewById(R.id.user_address_state_et);
         user_skill_et = (EditText) findViewById(R.id.user_skills_et);
         user_achievement_et = (EditText) findViewById(R.id.user_achievement_et);
 
@@ -123,10 +139,13 @@ public class UserEditProfileActivity extends AppCompatActivity {
             username = Bundle.getString("username");
             usermail = Bundle.getString("usermail");
             userimageurl = Bundle.getString("userimageurl");
-
             unique_user_Id = Bundle.getString("uniqueUserId");
+            user_bundle_skills = Bundle.getString("user_skills");
+            user_bundle_achievement = Bundle.getString("user_achievements");
+            user_bundle_address_city = Bundle.getString("user_current_city");
+            user_bundle_dob = Bundle.getString("user_dob");
         }
-
+Log.d("ankur",userimageurl);
         Picasso.with(UserEditProfileActivity.this)
                 .load(userimageurl)
                 .into(user_image_iv);
@@ -134,7 +153,40 @@ public class UserEditProfileActivity extends AppCompatActivity {
 
         user_name_tv.setText(username);
         user_email_tv.setText(usermail);
+
+
+        if(user_bundle_skills==null){
+            user_skill_et.setText("");
+        }
+        else{
+            user_skill_et.setText(user_bundle_skills);
+
+        }
+
+        if(user_bundle_achievement==null){
+            user_achievement_et.setText("");
+        }
+        else{
+            user_achievement_et.setText(user_bundle_achievement);
+
+        }
+
+        if(user_bundle_address_city==null){
+            user_address_city_et.setText("");
+        }
+        else {
+            user_address_city_et.setText(user_bundle_address_city);
+        }
+        if(user_bundle_dob==null){
+            tvDisplayDate.setText("hh");
+        }
+        else{
+          tvDisplayDate.setText("ss");
+        }
+
         Toast.makeText(getApplicationContext(),"id"+unique_user_Id,Toast.LENGTH_SHORT).show();
+
+
 
 
         user_primary_skill_adapter = ArrayAdapter.createFromResource(this, R.array.user_primary_skill_set_array, android.R.layout.simple_spinner_item);
@@ -164,20 +216,20 @@ public class UserEditProfileActivity extends AppCompatActivity {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selcted_primary_skill = parent.getItemAtPosition(position).toString();
+                selected_primary_skill = parent.getItemAtPosition(position).toString();
                 // selected_primary_item_position = parent.getSelectedItemPosition();
                 // user_secondary_skill_spinner.removeViewsInLayout(selected_primary_item_position+1,1);
-                Log.d("ankur", selcted_primary_skill);
-                if (selcted_primary_skill == user_primary_skill_spinner.getItemAtPosition(0)) {
+                Log.d("ankur", selected_primary_skill);
+                if (selected_primary_skill == user_primary_skill_spinner.getItemAtPosition(0)) {
                     user_bowling_hand = "-";
                     user_bowling_skill_spinner.setVisibility(View.INVISIBLE);
                     user_bowling_style_tv.setVisibility(View.INVISIBLE);
                     user_batting_skill_spinner.setVisibility(View.VISIBLE);
                     user_batting_style_tv.setVisibility(View.VISIBLE);
-                } else if (selcted_primary_skill == user_primary_skill_spinner.getItemAtPosition(1)) {
+                } else if (selected_primary_skill == user_primary_skill_spinner.getItemAtPosition(1)) {
                     user_batting_hand = "-";
                     user_batting_skill_spinner.setVisibility(View.INVISIBLE);
-                    user_batting_style_tv.setVisibility(View.INVISIBLE);
+                    user_batting_style_tv.setVisibility(View.INVISIBLE );
                     user_bowling_skill_spinner.setVisibility(View.VISIBLE);
                     user_bowling_style_tv.setVisibility(View.VISIBLE);
                 } else {
@@ -257,18 +309,38 @@ public class UserEditProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d("ankur", "New value is" + user_dob);
                 Log.d("ankur", "New value is" + user_edit_profile_details);
-                dataStorage();
-              //  databaseReference.child(unique_user_Id).updateChildren(user_edit_profile_details);
-                Log.d("ankur", "New value is 1" + user_edit_profile_details);
+                if(user_skill_et.getText().toString().length()==0){
+                    user_skill_et.setError("Skills not entered");
+                }
+               else if(user_achievement_et.getText().toString().length()==0){
+                    user_achievement_et.setError("Achievements not entered");
+                }
+              else if(user_address_city_et.getText().toString().length()==0){
+                    user_address_city_et.setError("City not entered");
+
+                }
 
 
-                Intent person_profile_intent = new Intent(UserEditProfileActivity.this, PersonProfile.class);
-                person_profile_intent.putExtra("selcted_primary_skill", selcted_primary_skill);
-                person_profile_intent.putExtra("selected_secondary_skill", selected_secondary_skill);
+             //  else if(user_address_state_et.getText().toString().length()==0){
+              //      user_address_state_et.setError("State not entered");
+              //  }
+                else if(selected_secondary_skill == user_secondary_skill_spinner.getItemAtPosition(0)){
+                    user_secondary_skill_spinner.requestFocus();
+                    Toast.makeText(getApplicationContext(),"Are You wicketKeeper?",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    dataStorage();
+                    databaseReference.child(unique_user_Id).updateChildren(user_edit_profile_details);
+                    Log.d("ankur", "New value is 1" + user_edit_profile_details);
 
-                startActivity(person_profile_intent);
-                finish();
 
+                    Intent person_profile_intent = new Intent(UserEditProfileActivity.this, PersonProfile.class);
+                    person_profile_intent.putExtra("selected_primary_skill", selected_primary_skill);
+                    person_profile_intent.putExtra("selected_secondary_skill", selected_secondary_skill);
+
+                    startActivity(person_profile_intent);
+                    finish();
+                }
             }
 
         });
@@ -279,7 +351,6 @@ public class UserEditProfileActivity extends AppCompatActivity {
     //Calender
     public void setCurrentDateOnView() {
 
-        tvDisplayDate = (TextView) findViewById(R.id.tvDate);
       //  dpResult = (DatePicker) findViewById(R.id.dpResult);
 
         final Calendar c = Calendar.getInstance();
@@ -320,8 +391,10 @@ public class UserEditProfileActivity extends AppCompatActivity {
         switch (id) {
             case DATE_DIALOG_ID:
                 // set date picker as current date
-                return new DatePickerDialog(this, datePickerListener,
+                DatePickerDialog dialog = new DatePickerDialog(this, datePickerListener,
                         year, month,day);
+                dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+                return dialog;
         }
         return null;
     }
@@ -349,9 +422,11 @@ public class UserEditProfileActivity extends AppCompatActivity {
 
     public void dataStorage() {
         if (selected_secondary_skill == user_wicketkeeper) {
-            user_role = ("WicketKeeper" + "-" + selcted_primary_skill);
-        } else {
-            user_role = selcted_primary_skill;
+            user_role = ("WicketKeeper" + "-" + selected_primary_skill);
+        }
+
+        else {
+            user_role = selected_primary_skill;
         }
         user_dob = tvDisplayDate.getText().toString();
         user_skills = user_skill_et.getText().toString();
@@ -374,7 +449,6 @@ public class UserEditProfileActivity extends AppCompatActivity {
             Log.d("ankur", "this is " + user_edit_profile_details);
             Log.d("ankur", "this is " + unique_user_Id);
 
-            databaseReference.child(unique_user_Id).updateChildren(user_edit_profile_details);
         }
     }
 

@@ -64,6 +64,7 @@ public class FollowingActivity extends AppCompatActivity {
 
         databaseReference.child("allUsersDetails/" + currentUser.getUid() + "/MyFollowing").addValueEventListener(new ValueEventListener() {
             @Override
+
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("ankur","Data changed called1");
 
@@ -99,7 +100,7 @@ public class FollowingActivity extends AppCompatActivity {
                     String user_name = dataSnapshot.child(Array_followers_name.get(j) + "/Name").getValue(String.class);
                     String user_image_url = dataSnapshot.child(Array_followers_name.get(j) + "/ProfileImageUrl").getValue(String.class);
                     all_followers_model_Arraylist.add(j,new FollowingModel(user_name,user_image_url));
-                    followingAdapter.getList(all_followers_model_Arraylist);
+                   // followingAdapter.getList(all_followers_model_Arraylist);
 
 
 
@@ -117,6 +118,7 @@ public class FollowingActivity extends AppCompatActivity {
                 Log.w("result", "Failed to read value.", error.toException());
             }
         });
+        followingAdapter.getList(all_followers_model_Arraylist);
         followingListRecyclerView.setAdapter(followingAdapter);
 
 
